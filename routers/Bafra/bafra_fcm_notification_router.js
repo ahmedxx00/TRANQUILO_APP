@@ -54,15 +54,21 @@ router.post("/send", async (req, res, next) => {
     options,
     function (err, response, body) {
       
-      if(!err){
-        res.status(200);
-        res.json({
-          success: "true",
-          msg: "sent",
-        });
-      }
-
-      // res.end();
+      // if(err){
+      //   res.status(200);
+      //   res.json({
+      //     success: "false",
+      //     msg: "not sent : " + err.message,
+      //   });
+      // }else{
+      //   res.status(200);
+      //   res.json({
+      //     success: "true",
+      //     msg: "sent",
+      //   });
+      // }
+      
+      res.end();
       
       // console.log(body);
     }
