@@ -7,6 +7,10 @@ const crypto = require("crypto");
 const encrypt_decrypt_key = "25lkoiy251lkojiu25lkoiy251lkojiu";
 const encrypt_decrypt_iv = "25lkoiy251lkojiu";
 
+//======== port ========
+const PORT = 3000;
+//======================
+
 const encrypt = function encrypt(text) {
   let cipher = crypto.createCipheriv(
     "aes-256-cbc",
@@ -80,5 +84,6 @@ module.exports = {
 
   VONAGE_API_KEY: VONAGE_API_KEY,
   VONAGE_API_SECRET: VONAGE_API_SECRET,
+  PORT: PORT,
   // pool : pool
 };

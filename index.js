@@ -6,6 +6,7 @@
 
 const express = require("express");
 const basicAuth = require("./auth");
+const PORT = require("./CONSTANTS").PORT;
 
 const app = express(); // create express app
 
@@ -165,9 +166,9 @@ mongodbutil.connectToServer(function (err) {
     res.json("404 not found");
   });
 
-  app.listen(3000, () => {
+  app.listen(PORT, () => {
     // start server
-    console.log("Restful is listen on port 3000");
+    console.log(`Restful is listen on port ${PORT}`);
   });
 
 });
