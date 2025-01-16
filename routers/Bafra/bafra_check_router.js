@@ -235,7 +235,6 @@ router.get("/ifPointLiesWithinPolygon", (req, res, next) => {
           let code = result.code;
           let payment_method = result.payment_method; // map
           let usdt_rate = result.usdt_rate; // int
-          
 
           if (nowTime > start_time && nowTime < end_time) {
             // go get products list
@@ -256,8 +255,8 @@ router.get("/ifPointLiesWithinPolygon", (req, res, next) => {
                       msg: "lies_and_now_working",
                       allProducts: items2,
                       code: code,
-                      payment_method : payment_method,
-                      usdt_rate :usdt_rate,
+                      payment_method: payment_method,
+                      usdt_rate: usdt_rate,
                       end_time: end_time, // to end session when timeout
                     });
                   } else {
@@ -421,13 +420,22 @@ router.get("/ifAdminIsAssignedToAnyPolygon", (req, res, next) => {
               end_time: end_time, // to end session when timeout
             });
           } else {
-            res.status(200);
-            res.json({
-              success: "false",
-              msg: "assigned_but_not_now_working",
-              start_time: start_time,
-              end_time: end_time,
-            });
+            if (nowTime > end_time) {
+              res.status(200);
+              res.json({
+                success: "true",
+                msg: "assigned_and_actual_shift_ended",
+                code: code,
+              });
+            } else {
+              res.status(200);
+              res.json({
+                success: "false",
+                msg: "assigned_but_not_now_working",
+                start_time: start_time,
+                end_time: end_time,
+              });
+            }
           }
         } else {
           res.status(200);
