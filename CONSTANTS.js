@@ -68,6 +68,11 @@ const chars = "abcdefghkmnprtuvwxyz23456789#@$";
 const VONAGE_API_KEY = "fb40114c";
 const VONAGE_API_SECRET = "ms9wKHJj8RbTEmoq";
 
+const BAFRA_PAYMENT_METHODS = {
+  WALLET: "WALLET",
+  CRYPTO: "CRYPTO",
+};
+
 // module.exports
 module.exports = {
   encrypt: encrypt,
@@ -78,6 +83,8 @@ module.exports = {
   closeTime: closeTime,
   BASIC_AUTH_NAME: BASIC_AUTH_NAME,
   BASIC_AUTH_PASS: BASIC_AUTH_PASS,
+
+  BAFRA_PAYMENT_METHODS: BAFRA_PAYMENT_METHODS,
 
   regCodeLength: regCodeLength,
   chars: chars,

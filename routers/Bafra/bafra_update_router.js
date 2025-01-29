@@ -160,7 +160,7 @@ router.put("/wallet_number", (req, res, next) => {
   let wallet_number = put_data.wallet_number;
 
   let payment_method = {
-    name: "WALLET",
+    name: CONSTANTS.BAFRA_PAYMENT_METHODS.WALLET,
     value: wallet_number,
   };
 
@@ -185,15 +185,47 @@ router.put("/wallet_number", (req, res, next) => {
   );
 });
 
-router.put("/binance_id", (req, res, next) => {
+// router.put("/binance_id", (req, res, next) => {
+//   let put_data = req.body;
+
+//   let _id = put_data._id;
+//   let binance_id = put_data.binance_id;
+
+//   let payment_method = {
+//     name: "BINANCE",
+//     value: binance_id,
+//   };
+
+//   db.collection("bafra_polygons").updateOne(
+//     { _id: new ObjectId(_id) },
+//     { $set: { payment_method: payment_method } },
+//     (err, result1) => {
+//       if (err) {
+//         res.status(200);
+//         res.json({
+//           success: "false",
+//           msg: "query 1 error",
+//         });
+//       } else {
+//         res.status(200);
+//         res.json({
+//           success: "true",
+//           msg: "updated",
+//         });
+//       }
+//     }
+//   );
+// });
+
+router.put("/crypto_address", (req, res, next) => {
   let put_data = req.body;
 
   let _id = put_data._id;
-  let binance_id = put_data.binance_id;
+  let crypto_address = put_data.crypto_address;
 
   let payment_method = {
-    name: "BINANCE",
-    value: binance_id,
+    name: CONSTANTS.BAFRA_PAYMENT_METHODS.CRYPTO,
+    value: crypto_address,
   };
 
   db.collection("bafra_polygons").updateOne(
@@ -222,7 +254,6 @@ router.put("/usdt_rate", (req, res, next) => {
 
   let _id = put_data._id;
   let usdt_rate = parseInt(put_data.usdt_rate);
-
 
   db.collection("bafra_polygons").updateOne(
     { _id: new ObjectId(_id) },
