@@ -13,8 +13,8 @@ var project_id = "bafra-24bea";
 
 module.exports = router;
 
-//#####################################################################
-
+//#############[ sending data msg to single device ]####### without npm firebase-admin package #############
+// ############ of course we can use firebase-admin to send for single device as well like below  #########
 router.post("/send", async (req, res, next) => {
   let post_data = req.body; // get post body
 
@@ -24,7 +24,6 @@ router.post("/send", async (req, res, next) => {
   let title = post_data.title;
   let message = post_data.message;
 
-  
   let access_token = await getAccessToken()
     .then((acc_tk) => acc_tk)
     .catch((error) => {
@@ -32,9 +31,9 @@ router.post("/send", async (req, res, next) => {
     });
 
   var options = {
-    "headers": {
-      "Authorization": "Bearer " + access_token,
-      "Content-Type" : "application/json",
+    headers: {
+      Authorization: "Bearer " + access_token,
+      "Content-Type": "application/json",
     },
   };
 
@@ -53,7 +52,6 @@ router.post("/send", async (req, res, next) => {
     }),
     options,
     function (err, response, body) {
-      
       // if(err){
       //   res.status(200);
       //   res.json({
@@ -67,9 +65,9 @@ router.post("/send", async (req, res, next) => {
       //     msg: "sent",
       //   });
       // }
-      
+
       res.end();
-      
+
       // console.log(body);
     }
   );
@@ -94,3 +92,38 @@ function getAccessToken() {
     });
   });
 }
+//#############[ sending to multiple devices ]####### with firebase-admin package #############
+
+const messaging = require("../../bafra_firebase_admin_config");
+
+router.post("/sendToAll", async (req, res, next) => {
+  let post_data = req.body; // get post body
+
+  let rec_tks = JSON.parse(post_data.rec_tks); // JsonObject has -> List<String> rec_tokens
+  let sender_app_name = post_data.sender_app_name;
+  let sender = post_data.sender;
+  let title = post_data.title;
+  let message = post_data.message;
+
+  let Msg = {
+    token: "",
+    data: {
+      sender: sender,
+      sender_app_name: sender_app_name,
+      title: title,
+      message: message,
+    },
+  };
+
+  let rec_tokens = rec_tks["rec_tokens"];
+  rec_tokens.forEach((tk) => {
+    Msg["token"] = tk;
+    messaging
+      .send(Msg)
+      .then((response) => {})
+      .catch((error) => {});
+  });
+
+
+});
+
