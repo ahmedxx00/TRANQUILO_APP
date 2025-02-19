@@ -248,3 +248,53 @@ router.delete("/allOrders", (req, res, next) => {
     }
   });
 });
+
+router.delete("/review", (req, res, next) => {
+  let delete_data = req.query; // get delete query
+
+  let _id = delete_data._id;
+
+  db.collection("reviews").deleteOne(
+    { _id: new ObjectId(_id) },
+    (err, result1) => {
+      if (err) {
+        res.status(200);
+        res.json({
+          success: "false",
+          msg: "query 1 error",
+        });
+      } else {
+        res.status(200);
+        res.json({
+          success: "true",
+          msg: "deleted",
+        });
+      }
+    }
+  );
+});
+
+router.delete("/appliance", (req, res, next) => {
+  let delete_data = req.query; // get delete query
+
+  let _id = delete_data._id;
+
+  db.collection("appliances").deleteOne(
+    { _id: new ObjectId(_id) },
+    (err, result1) => {
+      if (err) {
+        res.status(200);
+        res.json({
+          success: "false",
+          msg: "query 1 error",
+        });
+      } else {
+        res.status(200);
+        res.json({
+          success: "true",
+          msg: "deleted",
+        });
+      }
+    }
+  );
+});

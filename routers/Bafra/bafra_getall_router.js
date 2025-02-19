@@ -43,7 +43,7 @@ router.get("/allProducts", (req, res, next) => {
     });
 });
 //###############################################################
-  // --[ bafra Owner]--
+// --[ bafra Owner]--
 
 router.get("/allPolygons", (req, res, next) => {
   // --[ OO ]--
@@ -62,7 +62,7 @@ router.get("/allPolygons", (req, res, next) => {
           res.json({
             success: "true",
             msg: "done",
-            polygonList: items
+            polygonList: items,
           });
         } else {
           res.status(200);
@@ -165,7 +165,7 @@ router.get("/latest", (req, res, next) => {
     });
 });
 
-// TODO update inside apps and vps 
+// TODO update inside apps and vps
 router.get("/ourClients", (req, res, next) => {
   // --[ OO ]--
   db.collection("our_bafra_clients")
@@ -231,7 +231,7 @@ router.get("/feedbacks", (req, res, next) => {
 router.get("/userGifts", (req, res, next) => {
   // --[ OO ]--
   db.collection("bafra_gifts")
-    .find({user_got_his_money : false})
+    .find({ user_got_his_money: false })
     .sort({ created_at: -1 })
     .toArray((err, items) => {
       if (err) {
@@ -253,6 +253,82 @@ router.get("/userGifts", (req, res, next) => {
           res.json({
             success: "false",
             msg: "no gifts",
+          });
+        }
+      }
+    });
+});
+
+router.get("/reviews", (req, res, next) => {
+  // -- [ bafra ] and [ bafra Owner ]--
+
+  const resultsPerPage = 20;
+
+  let previous_fetched_count = req.query.previous_fetched_count; // the count already there in the app
+
+  db.collection("reviews")
+    .find({})
+    .sort({ created_at: -1 })
+    .skip(!previous_fetched_count ? 0 : parseInt(previous_fetched_count))
+    .limit(resultsPerPage + 1) // fetch one extra result
+    .toArray((err, reviews) => {
+      let hasNextPage = false;
+
+      if (err) {
+        res.status(200);
+        res.json({
+          success: "false",
+          msg: "query 1 error",
+        });
+      } else {
+        if (reviews.length > 0) {
+          // if got an extra result 21
+          if (reviews.length > resultsPerPage) {
+            hasNextPage = true; // has a next page of results
+            reviews.pop(); // remove extra result the 21th result
+          }
+          res.status(200);
+          res.json({
+            success: "true",
+            msg: "done",
+            reviews: reviews,
+            hasNextPage: hasNextPage,
+          });
+        } else {
+          res.status(200);
+          res.json({
+            success: "false",
+            msg: "no reviews",
+          });
+        }
+      }
+    });
+});
+router.get("/appliances", (req, res, next) => {
+  // -- [ bafra Owner ]--
+
+  db.collection("appliances")
+    .find({})
+    .toArray((err, appliances) => {
+      if (err) {
+        res.status(200);
+        res.json({
+          success: "false",
+          msg: "query 1 error",
+        });
+      } else {
+        if (appliances.length > 0) {
+          res.status(200);
+          res.json({
+            success: "true",
+            msg: "done",
+            applianceList: appliances,
+          });
+        } else {
+          res.status(200);
+          res.json({
+            success: "false",
+            msg: "no appliances",
           });
         }
       }

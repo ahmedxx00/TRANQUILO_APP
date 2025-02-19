@@ -483,6 +483,73 @@ router.post("/userGift", (req, res, next) => {
     }
   );
 });
+
+router.post("/review", (req, res, next) => {
+  let post_data = req.body; // get post body
+
+  let ph = post_data.ph; // String
+  let msg = post_data.msg; // String
+  let dt = post_data.dt; // the arabic String text for created_at Date
+  let created_at = post_data.created_at;
+
+  db.collection("reviews").insertOne(
+    {
+      ph: ph,
+      msg: msg,
+      dt: dt,
+      created_at: new Date(created_at), // UTC Date
+    },
+    (err, result1) => {
+      if (err) {
+        res.status(200);
+        res.json({
+          success: "false",
+          msg: "query 1 error",
+        });
+      } else {
+        res.status(201);
+        res.json({
+          success: "true",
+          msg: result1.insertedId,
+        });
+      }
+    }
+  );
+});
+
+router.post("/appliance", (req, res, next) => {
+  let post_data = req.body; // get post body
+
+  let lat = parseFloat(post_data.lat); // double
+  let lng = parseFloat(post_data.lng); // double
+  let desc = post_data.desc;
+  let type = post_data.type;
+
+  db.collection("appliances").insertOne(
+    {
+      lat: lat,
+      lng: lng,
+      desc: desc,
+      type: type,
+      created_at: new Date(),
+    },
+    (err, result1) => {
+      if (err) {
+        res.status(200);
+        res.json({
+          success: "false",
+          msg: "query 1 error",
+        });
+      } else {
+        res.status(201);
+        res.json({
+          success: "true",
+          msg: "added",
+        });
+      }
+    }
+  );
+});
 //-------------------- generate registration codes ------------------
 async function generateRegistrationCodes(num) {
   let y = [];
