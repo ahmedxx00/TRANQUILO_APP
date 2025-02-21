@@ -236,38 +236,51 @@ router.get("/ifPointLiesWithinPolygon", (req, res, next) => {
           let payment_method = result.payment_method; // map
           let usdt_rate = result.usdt_rate; // int
 
+          let max_orders_to_receive = result.max_orders_to_receive; // int
+          let already_received_orders = result.already_received_orders; // int
+
           if (nowTime > start_time && nowTime < end_time) {
-            // go get products list
-            db.collection("bafra_products")
-              .find({}, { projection: { _id: 0 } })
-              .toArray((err, items2) => {
-                if (err) {
-                  res.status(200);
-                  res.json({
-                    success: "false",
-                    msg: "query 2 error",
-                  });
-                } else {
-                  if (items2.length > 0) {
-                    res.status(200);
-                    res.json({
-                      success: "true",
-                      msg: "lies_and_now_working",
-                      allProducts: items2,
-                      code: code,
-                      payment_method: payment_method,
-                      usdt_rate: usdt_rate,
-                      end_time: end_time, // to end session when timeout
-                    });
-                  } else {
+            // check if polygon not reached its max orders to receive
+            // the already_received_orders is incremented in the Admin BA app when confirm order payment
+            if (already_received_orders >= max_orders_to_receive) {
+              res.status(200);
+              res.json({
+                success: "false",
+                msg: "polygon_reached_max_orders",
+              });
+            } else {
+              // go get products list
+              db.collection("bafra_products")
+                .find({}, { projection: { _id: 0 } })
+                .toArray((err, items2) => {
+                  if (err) {
                     res.status(200);
                     res.json({
                       success: "false",
-                      msg: "no products",
+                      msg: "query 2 error",
                     });
+                  } else {
+                    if (items2.length > 0) {
+                      res.status(200);
+                      res.json({
+                        success: "true",
+                        msg: "lies_and_now_working",
+                        allProducts: items2,
+                        code: code,
+                        payment_method: payment_method,
+                        usdt_rate: usdt_rate,
+                        end_time: end_time, // to end session when timeout
+                      });
+                    } else {
+                      res.status(200);
+                      res.json({
+                        success: "false",
+                        msg: "no products",
+                      });
+                    }
                   }
-                }
-              });
+                });
+            }
           } else {
             res.status(200);
             res.json({

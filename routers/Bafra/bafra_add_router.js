@@ -374,6 +374,8 @@ router.post("/polygon", (req, res, next) => {
         value: "",
       },
       usdt_rate: parseInt(0),
+      max_orders_to_receive: parseInt(1000),
+      already_received_orders: parseInt(0),
       admin_handler: "",
       geom: {
         type: "Polygon",

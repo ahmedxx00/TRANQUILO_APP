@@ -276,6 +276,86 @@ router.put("/usdt_rate", (req, res, next) => {
   );
 });
 
+router.put("/max_orders_to_receive", (req, res, next) => {
+  let put_data = req.body;
+
+  let _id = put_data._id;
+  let max_orders_to_receive = parseInt(put_data.max_orders_to_receive);
+
+  db.collection("bafra_polygons").updateOne(
+    { _id: new ObjectId(_id) },
+    { $set: { max_orders_to_receive: max_orders_to_receive } },
+    (err, result1) => {
+      if (err) {
+        res.status(200);
+        res.json({
+          success: "false",
+          msg: "query 1 error",
+        });
+      } else {
+        res.status(200);
+        res.json({
+          success: "true",
+          msg: "updated",
+        });
+      }
+    }
+  );
+});
+
+router.put("/zerofy_already_received_orders", (req, res, next) => {
+  let put_data = req.body;
+
+  let _id = put_data._id;
+
+  db.collection("bafra_polygons").updateOne(
+    { _id: new ObjectId(_id) },
+    { $set: { already_received_orders: parseInt(0) } },
+    (err, result1) => {
+      if (err) {
+        res.status(200);
+        res.json({
+          success: "false",
+          msg: "query 1 error",
+        });
+      } else {
+        res.status(200);
+        res.json({
+          success: "true",
+          msg: "updated",
+        });
+      }
+    }
+  );
+});
+
+router.put("/increase_received_orders", (req, res, next) => {
+  let put_data = req.body;
+
+  let code = put_data.code;
+
+  db.collection("bafra_polygons").updateOne(
+    { code: code },
+    { $inc: { already_received_orders : parseInt(1) } },
+    (err, result1) => {
+      if (err) {
+        res.status(200);
+        res.json({
+          success: "false",
+          msg: "query 1 error",
+        });
+      } else {
+        res.status(200);
+        res.json({
+          success: "true",
+          msg: "updated",
+        });
+      }
+    }
+  );
+
+});
+
 router.put("/admin_handler", (req, res, next) => {
   let put_data = req.body;
 
