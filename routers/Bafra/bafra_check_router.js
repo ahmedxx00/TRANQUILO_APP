@@ -424,6 +424,7 @@ router.get("/ifAdminIsAssignedToAnyPolygon", (req, res, next) => {
           let start_time = result.start_time;
           let end_time = result.end_time;
           let code = result.code;
+          let name = result.name;
 
           if (nowTime > start_time && nowTime < end_time) {
             res.status(200);
@@ -431,6 +432,7 @@ router.get("/ifAdminIsAssignedToAnyPolygon", (req, res, next) => {
               success: "true",
               msg: "assigned_and_now_working",
               code: code,
+              name: name,
               end_time: end_time, // to end session when timeout
             });
           } else {
@@ -440,12 +442,14 @@ router.get("/ifAdminIsAssignedToAnyPolygon", (req, res, next) => {
                 success: "true",
                 msg: "assigned_and_actual_shift_ended",
                 code: code,
+                name: name,
               });
             } else {
               res.status(200);
               res.json({
                 success: "false",
                 msg: "assigned_but_not_now_working",
+                name: name,
                 start_time: start_time,
                 end_time: end_time,
               });
