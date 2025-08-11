@@ -10,7 +10,7 @@ const CONSTANTS = require("../CONSTANTS");
 module.exports = router;
 
 //#################### [  tranquilo APP  ] ###############################
-router.post("/user", (req, res, next) => {
+router.post("/user", async (req, res, next) => {
   // --[ tranquilo ]--
   let post_data = req.body; // get post body
 
@@ -18,7 +18,7 @@ router.post("/user", (req, res, next) => {
   let plain_pass = post_data.password;
   let code = post_data.code;
 
-  let enc_pass = CONSTANTS.encrypt(plain_pass); // get encrypted password
+  let enc_pass = await CONSTANTS.encrypt(plain_pass); // get encrypted password
 
   db.collection("users").findOne({ phone: phone }, (err, result1) => {
     if (err) {

@@ -334,3 +334,35 @@ router.get("/appliances", (req, res, next) => {
       }
     });
 });
+
+
+router.get("/registrationCodes", (req, res, next) => {
+  // --[ OO ]--
+  db.collection("registration_codes")
+    .find({})
+    .sort({ used: -1 }) // boolean descending true first
+    .toArray((err, items) => {
+      if (err) {
+        res.status(200);
+        res.json({
+          success: "false",
+          msg: "query 1 error",
+        });
+      } else {
+        if (items.length > 0) {
+          res.status(200);
+          res.json({
+            success: "true",
+            msg: "done",
+            registrationCodesList: items,
+          });
+        } else {
+          res.status(200);
+          res.json({
+            success: "false",
+            msg: "no registration codes",
+          });
+        }
+      }
+    });
+});

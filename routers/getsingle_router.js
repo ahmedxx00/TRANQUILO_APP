@@ -12,7 +12,7 @@ module.exports = router;
 router.get("/userPassword", (req, res, next) => {
   let phone = req.query.phone;
 
-  db.collection("users").findOne({ phone: phone }, (err, result) => {
+  db.collection("users").findOne({ phone: phone }, async (err, result) => {
     if (err) {
       res.status(200);
       res.json({
@@ -21,7 +21,7 @@ router.get("/userPassword", (req, res, next) => {
       });
     } else {
       if (result) {
-        let plain = CONSTANTS.decrypt(result.password);
+        let plain = await CONSTANTS.decrypt(result.password);
         res.status(200);
         res.json({
           success: "true",
@@ -41,7 +41,7 @@ router.get("/userPassword", (req, res, next) => {
 router.get("/adminPassword", (req, res, next) => {
   let phone = req.query.phone;
 
-  db.collection("admins").findOne({ phone: phone }, (err, result) => {
+  db.collection("admins").findOne({ phone: phone }, async (err, result) => {
     if (err) {
       res.status(200);
       res.json({
@@ -50,7 +50,7 @@ router.get("/adminPassword", (req, res, next) => {
       });
     } else {
       if (result) {
-        let plain = CONSTANTS.decrypt(result.password);
+        let plain = await CONSTANTS.decrypt(result.password);
         res.status(200);
         res.json({
           success: "true",
@@ -132,7 +132,7 @@ router.get("/merchantPassword", (req, res, next) => {
 
   db.collection("merchants").findOne(
     { nick_name: nick_name },
-    (err, result) => {
+    async (err, result) => {
       if (err) {
         res.status(200);
         res.json({
@@ -141,7 +141,7 @@ router.get("/merchantPassword", (req, res, next) => {
         });
       } else {
         if (result) {
-          let plain = CONSTANTS.decrypt(result.password);
+          let plain = await CONSTANTS.decrypt(result.password);
           res.status(200);
           res.json({
             success: "true",
@@ -194,7 +194,7 @@ router.get("/transporterPassword", (req, res, next) => {
 
   db.collection("transporters").findOne(
     { nick_name: nick_name },
-    (err, result) => {
+    async (err, result) => {
       if (err) {
         res.status(200);
         res.json({
@@ -203,7 +203,7 @@ router.get("/transporterPassword", (req, res, next) => {
         });
       } else {
         if (result) {
-          let plain = CONSTANTS.decrypt(result.password);
+          let plain = await CONSTANTS.decrypt(result.password);
           res.status(200);
           res.json({
             success: "true",
@@ -254,7 +254,7 @@ router.get("/transporterPattern", (req, res, next) => {
 router.get("/hiderPassword", (req, res, next) => {
   let nick_name = req.query.nick_name;
 
-  db.collection("hiders").findOne({ nick_name: nick_name }, (err, result) => {
+  db.collection("hiders").findOne({ nick_name: nick_name }, async (err, result) => {
     if (err) {
       res.status(200);
       res.json({
@@ -263,7 +263,7 @@ router.get("/hiderPassword", (req, res, next) => {
       });
     } else {
       if (result) {
-        let plain = CONSTANTS.decrypt(result.password);
+        let plain = await CONSTANTS.decrypt(result.password);
         res.status(200);
         res.json({
           success: "true",
@@ -313,7 +313,7 @@ router.get("/exClientPassword", (req, res, next) => {
 
   db.collection("ex_clients").findOne(
     { nick_name: nick_name, his_exchanger: his_exchanger },
-    (err, result) => {
+    async (err, result) => {
       if (err) {
         res.status(200);
         res.json({
@@ -322,7 +322,7 @@ router.get("/exClientPassword", (req, res, next) => {
         });
       } else {
         if (result) {
-          let plain = CONSTANTS.decrypt(result.password);
+          let plain = await CONSTANTS.decrypt(result.password);
           res.status(200);
           res.json({
             success: "true",
@@ -344,7 +344,7 @@ router.get("/exchangerPassword", (req, res, next) => {
 
   db.collection("exchangers").findOne(
     { nick_name: nick_name },
-    (err, result) => {
+    async (err, result) => {
       if (err) {
         res.status(200);
         res.json({
@@ -353,7 +353,7 @@ router.get("/exchangerPassword", (req, res, next) => {
         });
       } else {
         if (result) {
-          let plain = CONSTANTS.decrypt(result.password);
+          let plain = await CONSTANTS.decrypt(result.password);
           res.status(200);
           res.json({
             success: "true",

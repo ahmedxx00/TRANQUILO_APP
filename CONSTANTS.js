@@ -11,7 +11,7 @@ const encrypt_decrypt_iv = "25lkoiy251lkojiu";
 const PORT = 3000;
 //======================
 
-const encrypt = function encrypt(text) {
+const encrypt = async function encrypt(text) {
   let cipher = crypto.createCipheriv(
     "aes-256-cbc",
     encrypt_decrypt_key,
@@ -22,7 +22,7 @@ const encrypt = function encrypt(text) {
   return encrypted.toString();
 };
 
-const decrypt = function decrypt(encryptedText) {
+const decrypt = async function decrypt(encryptedText) {
   let decipher = crypto.createDecipheriv(
     "aes-256-cbc",
     encrypt_decrypt_key,
@@ -73,6 +73,45 @@ const BAFRA_PAYMENT_METHODS = {
   CRYPTO: "CRYPTO",
 };
 
+//-------------------- generate registration codes ------------------
+async function generateOneRegistrationCodeByUser(issuer) {
+    let c = await genC();
+   return {
+     code: c,
+     used_by: "",
+     issued_by: issuer,
+     printed: true,
+     used: false,
+   };
+}
+
+async function generateRegistrationCodesByOwner(num) {
+  let y = [];
+  for (let i = 0; i < num; i++) {
+    let c = await genC();
+    y.push({
+      code: c,
+      used_by: "",
+      issued_by: "owner",
+      printed: false,
+      used: false,
+    });
+  }
+  return y;
+}
+
+async function genC() {
+  var r = "";
+  // code length 14
+  for (var i = 0; i < regCodeLength; i++) {
+    r += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return r;
+}
+//-------------------------------------------------------------------
+
+
+
 // module.exports
 module.exports = {
   encrypt: encrypt,
@@ -89,6 +128,9 @@ module.exports = {
   regCodeLength: regCodeLength,
   chars: chars,
 
+  generateOneRegistrationCodeByUser: generateOneRegistrationCodeByUser,
+  generateRegistrationCodesByOwner: generateRegistrationCodesByOwner,
+  
   VONAGE_API_KEY: VONAGE_API_KEY,
   VONAGE_API_SECRET: VONAGE_API_SECRET,
   PORT: PORT,

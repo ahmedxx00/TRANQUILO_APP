@@ -336,7 +336,7 @@ router.put("/increase_received_orders", (req, res, next) => {
 
   db.collection("bafra_polygons").updateOne(
     { code: code },
-    { $inc: { already_received_orders : parseInt(1) } },
+    { $inc: { already_received_orders: parseInt(1) } },
     (err, result1) => {
       if (err) {
         res.status(200);
@@ -353,7 +353,6 @@ router.put("/increase_received_orders", (req, res, next) => {
       }
     }
   );
-
 });
 
 router.put("/admin_handler", (req, res, next) => {
@@ -494,6 +493,31 @@ router.put("/pointLng", (req, res, next) => {
             msg: "no such polygon",
           });
         }
+      }
+    }
+  );
+});
+
+router.put("/registrationCodePrinted", (req, res, next) => {
+  let put_data = req.body;
+  let code = put_data.code;
+
+  db.collection("registration_codes").updateOne(
+    { code: code },
+    { $set: { printed: true } },
+    (err, result) => {
+      if (err) {
+        res.status(200);
+        res.json({
+          success: "false",
+          msg: "query 1 error",
+        });
+      } else {
+        res.status(200);
+        res.json({
+          success: "true",
+          msg: "changed",
+        });
       }
     }
   );
@@ -829,15 +853,15 @@ router.put("/adminUnBlock", (req, res, next) => {
     }
   );
 });
-router.put("/adminPassword", (req, res, next) => {
+router.put("/adminPassword", async (req, res, next) => {
   let put_data = req.body;
 
   let phone = put_data.phone;
   let old_password = put_data.old_password;
   let new_password = put_data.new_password;
 
-  let enc_oldpass = CONSTANTS.encrypt(old_password);
-  let enc_newpass = CONSTANTS.encrypt(new_password);
+  let enc_oldpass = await CONSTANTS.encrypt(old_password);
+  let enc_newpass = await CONSTANTS.encrypt(new_password);
 
   db.collection("bafra_admins").findOne({ phone: phone }, (err, result1) => {
     if (err) {
@@ -912,6 +936,7 @@ router.put("/userBlock", (req, res, next) => {
     }
   );
 });
+
 router.put("/userUnBlock", (req, res, next) => {
   let put_data = req.body;
   let phone = put_data.phone;
@@ -936,15 +961,16 @@ router.put("/userUnBlock", (req, res, next) => {
     }
   );
 });
-router.put("/userPassword", (req, res, next) => {
+
+router.put("/userPassword", async (req, res, next) => {
   let put_data = req.body;
 
   let phone = put_data.phone;
   let old_password = put_data.old_password;
   let new_password = put_data.new_password;
 
-  let enc_oldpass = CONSTANTS.encrypt(old_password);
-  let enc_newpass = CONSTANTS.encrypt(new_password);
+  let enc_oldpass = await CONSTANTS.encrypt(old_password);
+  let enc_newpass = await CONSTANTS.encrypt(new_password);
 
   db.collection("bafra_users").findOne({ phone: phone }, (err, result1) => {
     if (err) {

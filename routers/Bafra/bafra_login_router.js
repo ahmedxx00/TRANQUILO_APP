@@ -10,12 +10,12 @@ const CONSTANTS = require("../../CONSTANTS");
 module.exports = router;
 
 //#################### [  bafra APP  ] ###############################
-router.post("/user", (req, res, next) => {
+router.post("/user", async (req, res, next) => {
   // --[ bafra ]--
   let post_data = req.body; // get post params
   let phone = post_data.phone; // get phone
   let plain_pass = post_data.password;
-  let enc_pass = CONSTANTS.encrypt(plain_pass); // get encrypted password
+  let enc_pass = await CONSTANTS.encrypt(plain_pass); // get encrypted password
 
   db.collection("bafra_users").findOne({ phone: phone }, (err, result) => {
     if (err) {
@@ -63,12 +63,12 @@ router.post("/user", (req, res, next) => {
 });
 
 //#################### [  BA APP  ] ###############################
-router.post("/admin", (req, res, next) => {
+router.post("/admin", async (req, res, next) => {
   // --[ BA ]--
   let post_data = req.body; // get post params
   let phone = post_data.phone; // get phone
   let plain_pass = post_data.password;
-  let enc_pass = CONSTANTS.encrypt(plain_pass); // get encrypted password
+  let enc_pass = await CONSTANTS.encrypt(plain_pass); // get encrypted password
 
   db.collection("bafra_admins").findOne({ phone: phone }, (err, result) => {
     if (err) {

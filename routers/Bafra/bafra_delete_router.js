@@ -298,3 +298,26 @@ router.delete("/appliance", (req, res, next) => {
     }
   );
 });
+
+router.delete("/usedRegistrationCodes", (req, res, next) => {
+  db.collection("registration_codes").deleteMany(
+    {
+      used: true,
+    },
+    (err, result1) => {
+      if (err) {
+        res.status(200);
+        res.json({
+          success: "false",
+          msg: "query 1 error",
+        });
+      } else {
+        res.status(200);
+        res.json({
+          success: "true",
+          msg: "used codes deleted",
+        });
+      }
+    }
+  );
+});

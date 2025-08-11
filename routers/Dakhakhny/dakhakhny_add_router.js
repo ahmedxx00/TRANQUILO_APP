@@ -131,7 +131,7 @@ router.post("/productGroup", (req, res, next) => {
   );
 });
 
-router.post("/admin", (req, res, next) => {
+router.post("/admin", async (req, res, next) => {
   // --[ OAPP ]--
 
   let post_data = req.body; // get post body
@@ -140,7 +140,7 @@ router.post("/admin", (req, res, next) => {
   let password = post_data.password;
   let nick_name = post_data.nick_name;
 
-  let enc_pass = CONSTANTS.encrypt(password);
+  let enc_pass = await CONSTANTS.encrypt(password);
 
   db.collection("dakhakhny_admins").findOne(
     {

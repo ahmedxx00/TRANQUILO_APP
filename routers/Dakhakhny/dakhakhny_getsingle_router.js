@@ -73,7 +73,7 @@ router.get("/gift", (req, res, next) => {
 router.get("/userPassword", (req, res, next) => {
   let phone = req.query.phone;
 
-  db.collection("dakhakhny_users").findOne({ phone: phone }, (err, result) => {
+  db.collection("dakhakhny_users").findOne({ phone: phone }, async (err, result) => {
     if (err) {
       res.status(200);
       res.json({
@@ -82,7 +82,7 @@ router.get("/userPassword", (req, res, next) => {
       });
     } else {
       if (result) {
-        let plain = CONSTANTS.decrypt(result.password);
+        let plain = await CONSTANTS.decrypt(result.password);
         res.status(200);
         res.json({
           success: "true",
@@ -102,7 +102,7 @@ router.get("/userPassword", (req, res, next) => {
 router.get("/adminPassword", (req, res, next) => {
   let phone = req.query.phone;
 
-  db.collection("dakhakhny_admins").findOne({ phone: phone }, (err, result) => {
+  db.collection("dakhakhny_admins").findOne({ phone: phone }, async (err, result) => {
     if (err) {
       res.status(200);
       res.json({
@@ -111,7 +111,7 @@ router.get("/adminPassword", (req, res, next) => {
       });
     } else {
       if (result) {
-        let plain = CONSTANTS.decrypt(result.password);
+        let plain = await CONSTANTS.decrypt(result.password);
         res.status(200);
         res.json({
           success: "true",

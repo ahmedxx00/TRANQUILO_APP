@@ -857,15 +857,15 @@ router.put("/adminUnBlock", (req, res, next) => {
     }
   );
 });
-router.put("/adminPassword", (req, res, next) => {
+router.put("/adminPassword", async (req, res, next) => {
   let put_data = req.body;
 
   let phone = put_data.phone;
   let old_password = put_data.old_password;
   let new_password = put_data.new_password;
 
-  let enc_oldpass = CONSTANTS.encrypt(old_password);
-  let enc_newpass = CONSTANTS.encrypt(new_password);
+  let enc_oldpass = await CONSTANTS.encrypt(old_password);
+  let enc_newpass = await CONSTANTS.encrypt(new_password);
 
   db.collection("dakhakhny_admins").findOne(
     { phone: phone },
@@ -967,15 +967,15 @@ router.put("/userUnBlock", (req, res, next) => {
     }
   );
 });
-router.put("/userPassword", (req, res, next) => {
+router.put("/userPassword", async (req, res, next) => {
   let put_data = req.body;
 
   let phone = put_data.phone;
   let old_password = put_data.old_password;
   let new_password = put_data.new_password;
 
-  let enc_oldpass = CONSTANTS.encrypt(old_password);
-  let enc_newpass = CONSTANTS.encrypt(new_password);
+  let enc_oldpass = await CONSTANTS.encrypt(old_password);
+  let enc_newpass = await CONSTANTS.encrypt(new_password);
 
   db.collection("dakhakhny_users").findOne({ phone: phone }, (err, result1) => {
     if (err) {

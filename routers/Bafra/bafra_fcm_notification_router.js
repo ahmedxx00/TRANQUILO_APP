@@ -124,6 +124,5 @@ router.post("/sendToAll", async (req, res, next) => {
       .catch((error) => {});
   });
 
-
 });
 

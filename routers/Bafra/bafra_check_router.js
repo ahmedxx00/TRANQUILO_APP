@@ -325,6 +325,73 @@ router.get("/ifPointLiesWithinPolygon", (req, res, next) => {
   );
 });
 
+router.get("/ifRegistrationCodeValid", (req, res, next) => {
+  let code = req.query.code;
+
+  db.collection("registration_codes").findOne(
+    {
+      code: code,
+      used: false,
+    },
+    (err, result) => {
+      if (err) {
+        res.status(200);
+        res.json({
+          success: "false",
+          msg: "query 1 error",
+        });
+      } else {
+        if (result) {
+          let issued_by = result.issued_by;
+
+          if (issued_by != "owner") {
+            // check if the issuer is blocked already
+
+            db.collection("bafra_users").findOne(
+              { phone: issued_by },
+              (err, result2) => {
+                if (err) {
+                  res.status(200);
+                  res.json({
+                    success: "false",
+                    msg: "query 2 error",
+                  });
+                } else {
+                  if (result2.blocked == false) {
+                    res.status(200);
+                    res.json({
+                      success: "true",
+                      msg: issued_by, // referal_phone
+                    });
+                  } else {
+                    res.status(200);
+                    res.json({
+                      success: "false",
+                      msg: "referal_blocked",
+                    });
+                  }
+                }
+              }
+            );
+          } else {
+            res.status(200);
+            res.json({
+              success: "true",
+              msg: issued_by, // owner
+            });
+          }
+        } else {
+          res.status(200);
+          res.json({
+            success: "false",
+            msg: "invalid_code",
+          });
+        }
+      }
+    }
+  );
+});
+
 //------------------------ admin -----------------
 
 router.get(
@@ -439,7 +506,7 @@ router.get("/ifAdminIsAssignedToAnyPolygon", (req, res, next) => {
             if (nowTime > end_time) {
               res.status(200);
               res.json({
-                success: "true",
+                success: "true", // true
                 msg: "assigned_and_actual_shift_ended",
                 code: code,
                 name: name,

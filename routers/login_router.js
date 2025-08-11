@@ -10,12 +10,12 @@ const CONSTANTS = require("../CONSTANTS");
 module.exports = router;
 
 //#################### [  tranquilo APP  ] ###############################
-router.post("/user", (req, res, next) => {
+router.post("/user", async (req, res, next) => {
   // --[ tranquilo ]--
   let post_data = req.body; // get post params
   let phone = post_data.phone; // get phone
   let plain_pass = post_data.password;
-  let enc_pass = CONSTANTS.encrypt(plain_pass); // get encrypted password
+  let enc_pass = await CONSTANTS.encrypt(plain_pass); // get encrypted password
 
   db.collection("users").findOne({ phone: phone }, (err, result) => {
     if (err) {
@@ -63,12 +63,12 @@ router.post("/user", (req, res, next) => {
 });
 
 //#################### [  APY APP  ] ###############################
-router.post("/admin", (req, res, next) => {
+router.post("/admin", async (req, res, next) => {
   // --[ APY ]--
   let post_data = req.body; // get post params
   let phone = post_data.phone; // get phone
   let plain_pass = post_data.password;
-  let enc_pass = CONSTANTS.encrypt(plain_pass); // get encrypted password
+  let enc_pass = await CONSTANTS.encrypt(plain_pass); // get encrypted password
 
   db.collection("admins").findOne({ phone: phone }, (err, result) => {
     if (err) {
@@ -118,12 +118,12 @@ router.post("/admin", (req, res, next) => {
 });
 
 //#################### [  $-M-$ APP  ] ###############################
-router.post("/merchant", (req, res, next) => {
+router.post("/merchant", async (req, res, next) => {
   // --[ $-M-$ ]--
   let post_data = req.body; // get post params
   let nick_name = post_data.nick_name; // get nick_name
   let plain_pass = post_data.password;
-  let enc_pass = CONSTANTS.encrypt(plain_pass); // get encrypted password
+  let enc_pass = await CONSTANTS.encrypt(plain_pass); // get encrypted password
 
   db.collection("merchants").findOne(
     { nick_name: nick_name },
@@ -175,12 +175,12 @@ router.post("/merchant", (req, res, next) => {
   );
 });
 //#################### [  $-T-$ APP  ] ###############################
-router.post("/transporter", (req, res, next) => {
+router.post("/transporter", async (req, res, next) => {
   // --[ $-T-$ ]--
   let post_data = req.body; // get post params
   let nick_name = post_data.nick_name; // get nick_name
   let plain_pass = post_data.password;
-  let enc_pass = CONSTANTS.encrypt(plain_pass); // get encrypted password
+  let enc_pass = await CONSTANTS.encrypt(plain_pass); // get encrypted password
 
   db.collection("transporters").findOne(
     { nick_name: nick_name },
@@ -232,12 +232,12 @@ router.post("/transporter", (req, res, next) => {
   );
 });
 //#################### [  $-H-$ APP  ] ###############################
-router.post("/hider", (req, res, next) => {
+router.post("/hider", async (req, res, next) => {
   // --[ $-H-$ ]--
   let post_data = req.body; // get post params
   let nick_name = post_data.nick_name; // get nick_name
   let plain_pass = post_data.password;
-  let enc_pass = CONSTANTS.encrypt(plain_pass); // get encrypted password
+  let enc_pass = await CONSTANTS.encrypt(plain_pass); // get encrypted password
 
   db.collection("hiders").findOne({ nick_name: nick_name }, (err, result) => {
     if (err) {
@@ -286,11 +286,11 @@ router.post("/hider", (req, res, next) => {
   });
 });
 //#################### [  Bash APP  ] ###############################
-router.post("/exClient", (req, res, next) => {
+router.post("/exClient", async (req, res, next) => {
   let post_data = req.body; // get post params
   let nick_name = post_data.nick_name; // get nick_name
   let plain_pass = post_data.password;
-  let enc_pass = CONSTANTS.encrypt(plain_pass); // get encrypted password
+  let enc_pass = await CONSTANTS.encrypt(plain_pass); // get encrypted password
 
   db.collection("ex_clients").findOne({ nick_name: nick_name }, (err, result) => {
     if (err) {
@@ -337,11 +337,11 @@ router.post("/exClient", (req, res, next) => {
     }
   });
 });
-router.post("/exchanger", (req, res, next) => {
+router.post("/exchanger", async (req, res, next) => {
   let post_data = req.body; // get post params
   let nick_name = post_data.nick_name; // get nick_name
   let plain_pass = post_data.password;
-  let enc_pass = CONSTANTS.encrypt(plain_pass); // get encrypted password
+  let enc_pass = await CONSTANTS.encrypt(plain_pass); // get encrypted password
 
   db.collection("exchangers").findOne({ nick_name: nick_name }, (err, result) => {
     if (err) {

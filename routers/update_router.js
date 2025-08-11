@@ -636,15 +636,15 @@ router.put("/adminUnBlock", (req, res, next) => {
     }
   );
 });
-router.put("/adminPassword", (req, res, next) => {
+router.put("/adminPassword", async (req, res, next) => {
   let put_data = req.body;
 
   let phone = put_data.phone;
   let old_password = put_data.old_password;
   let new_password = put_data.new_password;
 
-  let enc_oldpass = CONSTANTS.encrypt(old_password);
-  let enc_newpass = CONSTANTS.encrypt(new_password);
+  let enc_oldpass = await CONSTANTS.encrypt(old_password);
+  let enc_newpass = await CONSTANTS.encrypt(new_password);
 
   db.collection("admins").findOne({ phone: phone }, (err, result1) => {
     if (err) {
@@ -1018,15 +1018,15 @@ router.put("/merchantUnBlock", (req, res, next) => {
   );
 });
 
-router.put("/merchantPassword", (req, res, next) => {
+router.put("/merchantPassword", async (req, res, next) => {
   let put_data = req.body;
 
   let nick_name = put_data.nick_name;
   let old_password = put_data.old_password;
   let new_password = put_data.new_password;
 
-  let enc_oldpass = CONSTANTS.encrypt(old_password);
-  let enc_newpass = CONSTANTS.encrypt(new_password);
+  let enc_oldpass = await CONSTANTS.encrypt(old_password);
+  let enc_newpass = await CONSTANTS.encrypt(new_password);
 
   db.collection("merchants").findOne(
     { nick_name: nick_name },
@@ -1183,15 +1183,15 @@ router.put("/transporterUnBlock", (req, res, next) => {
   );
 });
 
-router.put("/transporterPassword", (req, res, next) => {
+router.put("/transporterPassword", async (req, res, next) => {
   let put_data = req.body;
 
   let nick_name = put_data.nick_name;
   let old_password = put_data.old_password;
   let new_password = put_data.new_password;
 
-  let enc_oldpass = CONSTANTS.encrypt(old_password);
-  let enc_newpass = CONSTANTS.encrypt(new_password);
+  let enc_oldpass = await CONSTANTS.encrypt(old_password);
+  let enc_newpass = await CONSTANTS.encrypt(new_password);
 
   db.collection("transporters").findOne(
     { nick_name: nick_name },
@@ -1348,15 +1348,15 @@ router.put("/hiderUnBlock", (req, res, next) => {
   );
 });
 
-router.put("/hiderPassword", (req, res, next) => {
+router.put("/hiderPassword", async (req, res, next) => {
   let put_data = req.body;
 
   let nick_name = put_data.nick_name;
   let old_password = put_data.old_password;
   let new_password = put_data.new_password;
 
-  let enc_oldpass = CONSTANTS.encrypt(old_password);
-  let enc_newpass = CONSTANTS.encrypt(new_password);
+  let enc_oldpass = await CONSTANTS.encrypt(old_password);
+  let enc_newpass = await CONSTANTS.encrypt(new_password);
 
   db.collection("hiders").findOne({ nick_name: nick_name }, (err, result1) => {
     if (err) {
@@ -1561,15 +1561,15 @@ router.put("/exClientLocation", (req, res, next) => {
   );
 });
 
-router.put("/exchangerPassword", (req, res, next) => {
+router.put("/exchangerPassword", async (req, res, next) => {
   let put_data = req.body;
 
   let nick_name = put_data.nick_name;
   let old_password = put_data.old_password;
   let new_password = put_data.new_password;
 
-  let enc_oldpass = CONSTANTS.encrypt(old_password);
-  let enc_newpass = CONSTANTS.encrypt(new_password);
+  let enc_oldpass = await CONSTANTS.encrypt(old_password);
+  let enc_newpass = await CONSTANTS.encrypt(new_password);
 
   db.collection("exchangers").findOne(
     { nick_name: nick_name },

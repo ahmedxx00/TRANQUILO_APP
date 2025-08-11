@@ -125,7 +125,7 @@ router.post("/productGroup", (req, res, next) => {
   );
 });
 
-router.post("/admin", (req, res, next) => {
+router.post("/admin", async (req, res, next) => {
   // --[ OAPP ]--
 
   let post_data = req.body; // get post body
@@ -134,7 +134,7 @@ router.post("/admin", (req, res, next) => {
   let password = post_data.password;
   let nick_name = post_data.nick_name;
 
-  let enc_pass = CONSTANTS.encrypt(password);
+  let enc_pass = await CONSTANTS.encrypt(password);
 
   db.collection("bafra_admins").findOne(
     {
@@ -552,27 +552,27 @@ router.post("/appliance", (req, res, next) => {
     }
   );
 });
-//-------------------- generate registration codes ------------------
-async function generateRegistrationCodes(num) {
-  let y = [];
-  for (let i = 0; i < num; i++) {
-    let c = await genC();
-    y.push({
-      code: c,
-      phone: "",
-      printed: false,
-      used: false,
-    });
-  }
-  return y;
-}
-async function genC() {
-  var r = "";
-  var chars = CONSTANTS.chars;
-  var len = CONSTANTS.regCodeLength; // code length 14
-  for (var i = 0; i < len; i++) {
-    r += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return r;
-}
-//-------------------------------------------------------------------
+
+router.post("/registrationCodes", async (req, res, next) => {
+  let post_data = req.body; // get post body
+
+  let num = parseInt(post_data.num);
+
+  let c_list = await CONSTANTS.generateRegistrationCodesByOwner(num); // array of documents
+
+  db.collection("registration_codes").insertMany(c_list, (err, result1) => {
+    if (err) {
+      res.status(200);
+      res.json({
+        success: "false",
+        msg: "query 1 error",
+      });
+    } else {
+      res.status(201);
+      res.json({
+        success: "true",
+        msg: "added",
+      });
+    }
+  });
+});

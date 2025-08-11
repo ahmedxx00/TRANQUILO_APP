@@ -10,14 +10,14 @@ const CONSTANTS = require("../../CONSTANTS");
 module.exports = router;
 
 //#################### [  Dakhakhny APP  ] ###############################
-router.post("/user", (req, res, next) => {
+router.post("/user", async (req, res, next) => {
   // --[ Dakhakhny ]--
   let post_data = req.body; // get post body
 
   let phone = post_data.phone;
   let plain_pass = post_data.password;
 
-  let enc_pass = CONSTANTS.encrypt(plain_pass); // get encrypted password
+  let enc_pass = await CONSTANTS.encrypt(plain_pass); // get encrypted password
 
   db.collection("dakhakhny_users").findOne({ phone: phone }, (err, result1) => {
     if (err) {
