@@ -206,6 +206,7 @@ router.get("/lastOrder", (req, res, next) => {
 });
 
 router.get("/ifPointLiesWithinPolygon", (req, res, next) => {
+  let login_phone = req.query.login_phone;
   let lat = parseFloat(req.query.lat);
   let lng = parseFloat(req.query.lng);
   let nowTime = new Date(req.query.nowTime);
@@ -292,10 +293,16 @@ router.get("/ifPointLiesWithinPolygon", (req, res, next) => {
             });
           }
         } else {
-          // tell him about the now supported areas
-          db.collection("bafra_polygons")
-            .find({}, { projection: { name: 1, _id: 0 } })
-            .toArray((err, namesArray) => {
+          // NoArea meats its point now -> but we will save his point for future statistics
+          // so if there will be an area added in the future that contains him
+          // be care -> his phone and token is saved in Firestore but with no LCCR -> last city code recorded
+          db.collection("bafra_no_area_matched_users").insertOne(
+            {
+              phone: login_phone,
+              lat: lat,
+              lng: lng,
+            },
+            (err, result1) => {
               if (err) {
                 res.status(200);
                 res.json({
@@ -303,22 +310,36 @@ router.get("/ifPointLiesWithinPolygon", (req, res, next) => {
                   msg: "query 1 error",
                 });
               } else {
-                if (namesArray.length > 0) {
-                  res.status(200);
-                  res.json({
-                    success: "false",
-                    msg: "NoArea",
-                    areasNames: namesArray, // [{"name":"polygon1_name"},{"name":"polygon2_name"},{"name":"polygon3_name"}]
+                // tell him about the now supported areas
+                db.collection("bafra_polygons")
+                  .find({}, { projection: { name: 1, _id: 0 } })
+                  .toArray((err, namesArray) => {
+                    if (err) {
+                      res.status(200);
+                      res.json({
+                        success: "false",
+                        msg: "query 1 error",
+                      });
+                    } else {
+                      if (namesArray.length > 0) {
+                        res.status(200);
+                        res.json({
+                          success: "false",
+                          msg: "NoArea",
+                          areasNames: namesArray, // [{"name":"polygon1_name"},{"name":"polygon2_name"},{"name":"polygon3_name"}]
+                        });
+                      } else {
+                        res.status(200);
+                        res.json({
+                          success: "false",
+                          msg: "هناك بعض الصيانة بالتطبيق",
+                        });
+                      }
+                    }
                   });
-                } else {
-                  res.status(200);
-                  res.json({
-                    success: "false",
-                    msg: "هناك بعض الصيانة بالتطبيق",
-                  });
-                }
               }
-            });
+            }
+          );
         }
       }
     }

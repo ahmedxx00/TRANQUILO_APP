@@ -130,8 +130,6 @@ router.post("/user", async (req, res, next) => {
 
   let phone = post_data.phone;
   let plain_pass = post_data.password;
-  let lat = parseFloat(post_data.lat);
-  let lng = parseFloat(post_data.lng);
 
   db.collection("bafra_users").findOne(
     { phone: phone },
@@ -157,8 +155,6 @@ router.post("/user", async (req, res, next) => {
               phone: phone,
               password: enc_pass,
               blocked: false,
-              registration_lat: lat,
-              registration_lng: lng,
               created_at: new Date(), // UTC Date
             },
             (err, result2) => {

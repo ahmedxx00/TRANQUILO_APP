@@ -335,6 +335,36 @@ router.get("/appliances", (req, res, next) => {
     });
 });
 
+router.get("/no_area_matched_users", (req, res, next) => {
+  // -- [ bafra Owner ]--
+
+  db.collection("bafra_no_area_matched_users")
+    .find({})
+    .toArray((err, no_area_matched_users) => {
+      if (err) {
+        res.status(200);
+        res.json({
+          success: "false",
+          msg: "query 1 error",
+        });
+      } else {
+        if (no_area_matched_users.length > 0) {
+          res.status(200);
+          res.json({
+            success: "true",
+            msg: "done",
+            noAreaUsersList: no_area_matched_users,
+          });
+        } else {
+          res.status(200);
+          res.json({
+            success: "false",
+            msg: "no no_area_matched_users",
+          });
+        }
+      }
+    });
+});
 
 router.get("/registrationCodes", (req, res, next) => {
   // --[ OO ]--
