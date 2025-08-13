@@ -18,6 +18,7 @@ module.exports = router;
 router.post("/send", async (req, res, next) => {
   let post_data = req.body; // get post body
 
+  let android_version = parseInt(post_data.android_version);
   let receiver_token = post_data.receiver_token;
   let sender_app_name = post_data.sender_app_name;
   let sender = post_data.sender;
@@ -37,9 +38,11 @@ router.post("/send", async (req, res, next) => {
     },
   };
 
-  needle.post(
-    "https://fcm.googleapis.com/v1/projects/" + project_id + "/messages:send",
-    JSON.stringify({
+  let payload;
+
+  if (android_version <= 28) {
+    // less than android 9 → data-only
+    payload = {
       message: {
         token: receiver_token,
         data: {
@@ -49,7 +52,35 @@ router.post("/send", async (req, res, next) => {
           message: message,
         },
       },
-    }),
+    };
+  } else {
+    // android 10 or higher → data + notification payload
+    payload = {
+      message: {
+        token: receiver_token,
+        android: {
+          priority: "HIGH",
+          ttl: 3600000, // hour
+          notification: {
+            channel_id: "bafra_notification", // same notification channel name in android
+          },
+        },
+        notification: {
+          title: title,
+          body: message,
+        },
+        data: {
+          sender: sender,
+          sender_app_name: sender_app_name,
+          title: title,
+          message: message,
+        },
+      },
+    };
+  }
+  needle.post(
+    "https://fcm.googleapis.com/v1/projects/" + project_id + "/messages:send",
+    JSON.stringify(payload),
     options,
     function (err, response, body) {
       // if(err){
@@ -99,30 +130,56 @@ const messaging = require("../../bafra_firebase_admin_config");
 router.post("/sendToAll", async (req, res, next) => {
   let post_data = req.body; // get post body
 
-  let rec_tks = JSON.parse(post_data.rec_tks); // JsonObject has -> List<String> rec_tokens
+  let rec_tks = JSON.parse(post_data.rec_tks); // JsonObject has -> List<Object> rec_tokens
   let sender_app_name = post_data.sender_app_name;
   let sender = post_data.sender;
   let title = post_data.title;
   let message = post_data.message;
 
-  let Msg = {
-    token: "",
-    data: {
-      sender: sender,
-      sender_app_name: sender_app_name,
-      title: title,
-      message: message,
-    },
-  };
-
   let rec_tokens = rec_tks["rec_tokens"];
-  rec_tokens.forEach((tk) => {
-    Msg["token"] = tk;
+
+  rec_tokens.forEach((obj) => {
+    let Msg;
+
+    console.log(obj);
+
+    if (parseInt(obj["android_version"]) <= 28) {
+      // less than android 9 → data-only
+      Msg = {
+        token: obj["token"],
+        data: {
+          sender: sender,
+          sender_app_name: sender_app_name,
+          title: title,
+          message: message,
+        },
+      };
+    } else {
+      // android 10 or higher → data + notification payload
+      Msg = {
+        token: obj["token"],
+        android: {
+          priority: "HIGH",
+          ttl: 3600000, // hour
+          notification: {
+            channel_id: "bafra_notification", // same notification channel name in android
+          },
+        },
+        notification: {
+          title: title,
+          body: message,
+        },
+        data: {
+          sender: sender,
+          sender_app_name: sender_app_name,
+          title: title,
+          message: message,
+        },
+      };
+    }
     messaging
       .send(Msg)
       .then((response) => {})
       .catch((error) => {});
   });
-
 });
-
