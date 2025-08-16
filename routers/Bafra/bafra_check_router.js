@@ -296,12 +296,10 @@ router.get("/ifPointLiesWithinPolygon", (req, res, next) => {
           // NoArea meats its point now -> but we will save his point for future statistics
           // so if there will be an area added in the future that contains him
           // be care -> his phone and token is saved in Firestore but with no LCCR -> last city code recorded
-          db.collection("bafra_no_area_matched_users").insertOne(
-            {
-              phone: login_phone,
-              lat: lat,
-              lng: lng,
-            },
+          db.collection("bafra_no_area_matched_users").updateOne(
+            { phone: login_phone },
+            { $set: { lat: lat, lng: lng } },
+            { upsert: true },
             (err, result1) => {
               if (err) {
                 res.status(200);

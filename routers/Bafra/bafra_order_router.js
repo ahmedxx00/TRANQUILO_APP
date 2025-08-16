@@ -125,35 +125,55 @@ router.put("/arrived", (req, res, next) => {
             }
           );
         } else {
-          db.collection("bafra_admins").updateOne(
-            { phone: admin },
-            { $inc: { money: total } },
-
-            (err, result5) => {
+          db.collection("our_bafra_clients").insertOne(
+            {
+              phone: user_phone,
+              num_of_success_orders: parseInt(1),
+              total_at_last_gift: parseInt(0),
+              next_gift_due: total,
+              grand_total: total,
+              created_at: new Date(),
+            },
+            (err, result3) => {
               if (err) {
                 res.status(200);
                 res.json({
                   success: "false",
-                  msg: "query 5 error",
+                  msg: "query 3 error",
                 });
               } else {
-                db.collection("bafra_admins").findOne(
+                db.collection("bafra_admins").updateOne(
                   { phone: admin },
+                  { $inc: { money: total } },
 
-                  (err, result6) => {
+                  (err, result5) => {
                     if (err) {
                       res.status(200);
                       res.json({
                         success: "false",
-                        msg: "query 6 error",
+                        msg: "query 5 error",
                       });
                     } else {
-                      res.status(200);
-                      res.json({
-                        success: "true",
-                        msg: "done",
-                        money: parseInt(result6.money), // return result after update
-                      });
+                      db.collection("bafra_admins").findOne(
+                        { phone: admin },
+
+                        (err, result7) => {
+                          if (err) {
+                            res.status(200);
+                            res.json({
+                              success: "false",
+                              msg: "query 6 error",
+                            });
+                          } else {
+                            res.status(200);
+                            res.json({
+                              success: "true",
+                              msg: "done",
+                              money: parseInt(result7.money), // return result after update
+                            });
+                          }
+                        }
+                      );
                     }
                   }
                 );

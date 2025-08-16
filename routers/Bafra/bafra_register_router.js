@@ -165,31 +165,11 @@ router.post("/user", async (req, res, next) => {
                   msg: "query 2 error",
                 });
               } else {
-                db.collection("our_bafra_clients").insertOne(
-                  {
-                    phone: phone,
-                    num_of_success_orders: parseInt(0),
-                    total_at_last_gift: parseInt(0),
-                    next_gift_due: parseInt(0),
-                    grand_total: parseInt(0),
-                    created_at: new Date(),
-                  },
-                  (err, result3) => {
-                    if (err) {
-                      res.status(200);
-                      res.json({
-                        success: "false",
-                        msg: "query 3 error",
-                      });
-                    } else {
-                      res.status(201);
-                      res.json({
-                        success: "true",
-                        msg: "user register successful",
-                      });
-                    }
-                  }
-                );
+                res.status(201);
+                res.json({
+                  success: "true",
+                  msg: "user register successful",
+                });
               }
             }
           );

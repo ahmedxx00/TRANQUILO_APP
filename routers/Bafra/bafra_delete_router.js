@@ -231,6 +231,7 @@ router.delete("/latestVersion", (req, res, next) => {
   );
 });
 
+// not used
 router.delete("/allOrders", (req, res, next) => {
   db.collection("bafra_orders").deleteMany({}, (err, result1) => {
     if (err) {
@@ -299,6 +300,7 @@ router.delete("/appliance", (req, res, next) => {
   );
 });
 
+// not used
 router.delete("/usedRegistrationCodes", (req, res, next) => {
   db.collection("registration_codes").deleteMany(
     {
@@ -316,6 +318,130 @@ router.delete("/usedRegistrationCodes", (req, res, next) => {
         res.json({
           success: "true",
           msg: "used codes deleted",
+        });
+      }
+    }
+  );
+});
+
+router.delete("/admin", (req, res, next) => {
+  let delete_data = req.query; // get delete query
+
+  let _id = delete_data._id;
+
+  db.collection("bafra_admins").deleteOne(
+    { _id: new ObjectId(_id) },
+    (err, result1) => {
+      if (err) {
+        res.status(200);
+        res.json({
+          success: "false",
+          msg: "query 1 error",
+        });
+      } else {
+        res.status(200);
+        res.json({
+          success: "true",
+          msg: "deleted",
+        });
+      }
+    }
+  );
+});
+
+router.delete("/user", (req, res, next) => {
+  let delete_data = req.query; // get delete query
+
+  let _id = delete_data._id;
+
+  db.collection("bafra_users").deleteOne(
+    { _id: new ObjectId(_id) },
+    (err, result1) => {
+      if (err) {
+        res.status(200);
+        res.json({
+          success: "false",
+          msg: "query 1 error",
+        });
+      } else {
+        res.status(200);
+        res.json({
+          success: "true",
+          msg: "deleted",
+        });
+      }
+    }
+  );
+});
+
+router.delete("/feedback", (req, res, next) => {
+  let delete_data = req.query; // get delete query
+
+  let _id = delete_data._id;
+
+  db.collection("bafra_feedbacks").deleteOne(
+    { _id: new ObjectId(_id) },
+    (err, result1) => {
+      if (err) {
+        res.status(200);
+        res.json({
+          success: "false",
+          msg: "query 1 error",
+        });
+      } else {
+        res.status(200);
+        res.json({
+          success: "true",
+          msg: "deleted",
+        });
+      }
+    }
+  );
+});
+
+router.delete("/our_client", (req, res, next) => {
+  let delete_data = req.query; // get delete query
+
+  let _id = delete_data._id;
+
+  db.collection("our_bafra_clients").deleteOne(
+    { _id: new ObjectId(_id) },
+    (err, result1) => {
+      if (err) {
+        res.status(200);
+        res.json({
+          success: "false",
+          msg: "query 1 error",
+        });
+      } else {
+        res.status(200);
+        res.json({
+          success: "true",
+          msg: "deleted",
+        });
+      }
+    }
+  );
+});
+router.delete("/no_area_user", (req, res, next) => {
+  let delete_data = req.query; // get delete query
+
+  let _id = delete_data._id;
+
+  db.collection("bafra_no_area_matched_users").deleteOne(
+    { _id: new ObjectId(_id) },
+    (err, result1) => {
+      if (err) {
+        res.status(200);
+        res.json({
+          success: "false",
+          msg: "query 1 error",
+        });
+      } else {
+        res.status(200);
+        res.json({
+          success: "true",
+          msg: "deleted",
         });
       }
     }
