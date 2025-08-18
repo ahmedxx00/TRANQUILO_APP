@@ -155,6 +155,10 @@ router.post("/user", async (req, res, next) => {
               phone: phone,
               password: enc_pass,
               blocked: false,
+              last_lat: parseFloat(0.0),
+              last_lng: parseFloat(0.0),
+              dateOfLocation: new Date(),
+              last_city_code: null,
               created_at: new Date(), // UTC Date
             },
             (err, result2) => {

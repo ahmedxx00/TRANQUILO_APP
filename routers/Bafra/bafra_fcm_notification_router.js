@@ -15,6 +15,8 @@ module.exports = router;
 
 //#############[ sending data msg to single device ]####### without npm firebase-admin package #############
 // ############ of course we can use firebase-admin to send for single device as well like below  #########
+
+/*
 router.post("/send", async (req, res, next) => {
   let post_data = req.body; // get post body
 
@@ -123,11 +125,66 @@ function getAccessToken() {
     });
   });
 }
+*/
 //#############[ sending to multiple devices ]####### with firebase-admin package #############
 
 const messaging = require("../../bafra_firebase_admin_config");
 
-router.post("/sendToAll", async (req, res, next) => {
+router.post("/send", (req, res, next) => {
+  let post_data = req.body; // get post body
+
+  let android_version = parseInt(post_data.android_version);
+  let receiver_token = post_data.receiver_token;
+  let sender_app_name = post_data.sender_app_name;
+  let sender = post_data.sender;
+  let title = post_data.title;
+  let message = post_data.message;
+
+  let Msg = null;
+
+  if (android_version <= 28) {
+    // less than android 9 → data-only
+    Msg = {
+      token: receiver_token,
+      data: {
+        sender: sender,
+        sender_app_name: sender_app_name,
+        title: title,
+        message: message,
+      },
+    };
+  } else {
+    // android 10 or higher → data + notification payload
+    Msg = {
+      token: receiver_token,
+      android: {
+        priority: "HIGH",
+        ttl: 3600000, // hour
+        notification: {
+          channel_id: "bafra_notification", // same notification channel name in android
+        },
+      },
+      notification: {
+        title: title,
+        body: message,
+      },
+      data: {
+        sender: sender,
+        sender_app_name: sender_app_name,
+        title: title,
+        message: message,
+      },
+    };
+  }
+  if (Msg != null) {
+    messaging
+      .send(Msg)
+      .then((response) => {})
+      .catch((error) => {});
+  }
+});
+
+router.post("/sendToAll", (req, res, next) => {
   let post_data = req.body; // get post body
 
   let rec_tks = JSON.parse(post_data.rec_tks); // JsonObject has -> List<Object> rec_tokens
@@ -140,8 +197,6 @@ router.post("/sendToAll", async (req, res, next) => {
 
   rec_tokens.forEach((obj) => {
     let Msg;
-
-    console.log(obj);
 
     if (parseInt(obj["android_version"]) <= 28) {
       // less than android 9 → data-only

@@ -222,7 +222,7 @@ router.get("/ifPointLiesWithinPolygon", (req, res, next) => {
         },
       },
     },
-    (err, result) => {
+    (err, pol_result) => {
       if (err) {
         res.status(200);
         res.json({
@@ -230,68 +230,103 @@ router.get("/ifPointLiesWithinPolygon", (req, res, next) => {
           msg: "query 1 error",
         });
       } else {
-        if (result) {
-          let start_time = result.start_time;
-          let end_time = result.end_time;
-          let code = result.code;
-          let payment_method = result.payment_method; // map
-          let usdt_rate = result.usdt_rate; // int
+        if (pol_result) {
+          let start_time = pol_result.start_time;
+          let end_time = pol_result.end_time;
+          let code = pol_result.code;
+          let payment_method = pol_result.payment_method; // map
+          let usdt_rate = pol_result.usdt_rate; // int
 
-          let max_orders_to_receive = result.max_orders_to_receive; // int
-          let already_received_orders = result.already_received_orders; // int
+          let max_orders_to_receive = pol_result.max_orders_to_receive; // int
+          let already_received_orders = pol_result.already_received_orders; // int
 
-          if (nowTime > start_time && nowTime < end_time) {
-            // check if polygon not reached its max orders to receive
-            // the already_received_orders is incremented in the Admin BA app when confirm order payment
-            if (already_received_orders >= max_orders_to_receive) {
-              res.status(200);
-              res.json({
-                success: "false",
-                msg: "polygon_reached_max_orders",
-              });
-            } else {
-              // go get products list
-              db.collection("bafra_products")
-                .find({}, { projection: { _id: 0 } })
-                .toArray((err, items2) => {
-                  if (err) {
-                    res.status(200);
-                    res.json({
-                      success: "false",
-                      msg: "query 2 error",
-                    });
-                  } else {
-                    if (items2.length > 0) {
-                      res.status(200);
-                      res.json({
-                        success: "true",
-                        msg: "lies_and_now_working",
-                        allProducts: items2,
-                        code: code,
-                        payment_method: payment_method,
-                        usdt_rate: usdt_rate,
-                        end_time: end_time, // to end session when timeout
-                      });
-                    } else {
+          db.collection("bafra_users").updateOne(
+            { phone: login_phone },
+            {
+              $set: {
+                last_lat: lat,
+                last_lng: lng,
+                dateOfLocation: new Date(),
+                last_city_code: code,
+              },
+            },
+            (err, result2) => {
+              if (err) {
+                res.status(200);
+                res.json({
+                  success: "false",
+                  msg: "query 2 error",
+                });
+              } else {
+                // delete him from no_area users
+                db.collection("bafra_no_area_matched_users").deleteOne(
+                  { phone: login_phone },
+                  (err, result4) => {
+                    if (err) {
                       res.status(200);
                       res.json({
                         success: "false",
-                        msg: "no products",
+                        msg: "query 4 error",
                       });
+                    } else {
+                      if (nowTime > start_time && nowTime < end_time) {
+                        // check if polygon not reached its max orders to receive
+                        // the already_received_orders is incremented in the Admin BA app when confirm order payment
+                        if (already_received_orders >= max_orders_to_receive) {
+                          res.status(200);
+                          res.json({
+                            success: "false",
+                            msg: "polygon_reached_max_orders",
+                          });
+                        } else {
+                          // go get products list
+                          db.collection("bafra_products")
+                            .find({}, { projection: { _id: 0 } })
+                            .toArray((err, items2) => {
+                              if (err) {
+                                res.status(200);
+                                res.json({
+                                  success: "false",
+                                  msg: "query 2 error",
+                                });
+                              } else {
+                                if (items2.length > 0) {
+                                  res.status(200);
+                                  res.json({
+                                    success: "true",
+                                    msg: "lies_and_now_working",
+                                    allProducts: items2,
+                                    code: code,
+                                    payment_method: payment_method,
+                                    usdt_rate: usdt_rate,
+                                    end_time: end_time, // to end session when timeout
+                                  });
+                                } else {
+                                  res.status(200);
+                                  res.json({
+                                    success: "false",
+                                    msg: "no products",
+                                  });
+                                }
+                              }
+                            });
+                        }
+                      } else {
+                        res.status(200);
+                        res.json({
+                          success: "false",
+                          msg: "lies_but_not_now_working",
+                          start_time: start_time,
+                          end_time: end_time,
+                          code: code,
+                        });
+                      }
                     }
                   }
-                });
+                );
+              }
             }
-          } else {
-            res.status(200);
-            res.json({
-              success: "false",
-              msg: "lies_but_not_now_working",
-              start_time: start_time,
-              end_time: end_time,
-              code: code,
-            });
-          }
+          );
         } else {
           // NoArea meats its point now -> but we will save his point for future statistics
           // so if there will be an area added in the future that contains him

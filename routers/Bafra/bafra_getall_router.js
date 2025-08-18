@@ -106,10 +106,18 @@ router.get("/admins", (req, res, next) => {
 });
 
 router.get("/users", (req, res, next) => {
-  // --[ OO ]--
+  const resultsPerPage = 20;
+
+  let previous_fetched_count = req.query.previous_fetched_count; // the count already there in the app
+
   db.collection("bafra_users")
     .find({})
-    .toArray((err, items) => {
+    .sort({ created_at: -1 })
+    .skip(!previous_fetched_count ? 0 : parseInt(previous_fetched_count))
+    .limit(resultsPerPage + 1) // fetch one extra result
+    .toArray((err, users) => {
+      let hasNextPage = false;
+
       if (err) {
         res.status(200);
         res.json({
@@ -117,13 +125,83 @@ router.get("/users", (req, res, next) => {
           msg: "query 1 error",
         });
       } else {
-        if (items.length > 0) {
-          res.status(200);
-          res.json({
-            success: "true",
-            msg: "done",
-            userList: items,
-          });
+        if (users.length > 0) {
+          // if got an extra result 21
+          if (users.length > resultsPerPage) {
+            hasNextPage = true; // has a next page of results
+            users.pop(); // remove extra result the 21th result
+          }
+
+          if (
+            !previous_fetched_count ||
+            parseInt(previous_fetched_count) == 0
+          ) {
+            // first fetch
+            db.collection("bafra_users")
+              .aggregate([
+                {
+                  $group: {
+                    _id: { $ifNull: ["$last_city_code", "unknown"] },
+                    count: { $sum: 1 },
+                  },
+                },
+                // form a key-value pair
+                {
+                  $project: {
+                    kv: { k: "$_id", v: "$count" },
+                  },
+                },
+                // group them
+                {
+                  $group: {
+                    _id: null,
+                    cities: { $push: "$kv" },
+                    whole_num: { $sum: "$kv.v" }, // whole_num
+                  },
+                },
+                // return organized root
+                {
+                  $replaceRoot: {
+                    newRoot: {
+                      whole_num: "$whole_num",
+                      city_codes_obj: { $arrayToObject: "$cities" },
+                    },
+                  },
+                },
+              ])
+              .toArray((err, docs) => {
+                if (err) {
+                  res.status(200);
+                  res.json({
+                    success: "false",
+                    msg: "query 3 error",
+                  });
+                } else {
+                  // array has only one object now
+                  const counts_obj = docs[0] || {
+                    whole_num: 0,
+                    city_codes_obj: {},
+                  };
+                  res.status(200);
+                  res.json({
+                    success: "true",
+                    msg: "done",
+                    userList: users,
+                    hasNextPage: hasNextPage,
+                    counts_obj: counts_obj,
+                  });
+                }
+              });
+          } else {
+            // loadMore not first fetch
+            res.status(200);
+            res.json({
+              success: "true",
+              msg: "done",
+              userList: users,
+              hasNextPage: hasNextPage,
+            });
+          }
         } else {
           res.status(200);
           res.json({
