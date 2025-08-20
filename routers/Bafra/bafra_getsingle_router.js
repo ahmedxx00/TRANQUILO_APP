@@ -8,10 +8,8 @@ const CONSTANTS = require("../../CONSTANTS");
 module.exports = router;
 // const ObjectId = require("mongodb").ObjectId;
 
-
 //#################### [  bafra APP  ] ######################
 router.get("/gift", (req, res, next) => {
-  
   let phone = req.query.phone; // login_phone
 
   db.collection("bafra_gifts")
@@ -58,7 +56,8 @@ router.get("/gift", (req, res, next) => {
               msg: "user_has_no_gift",
             });
           }
-        } else {// no gift inside db 
+        } else {
+          // no gift inside db
           res.status(200);
           res.json({
             success: "false",
@@ -73,59 +72,127 @@ router.get("/gift", (req, res, next) => {
 router.get("/userPassword", (req, res, next) => {
   let phone = req.query.phone;
 
-  db.collection("bafra_users").findOne({ phone: phone }, async (err, result) => {
-    if (err) {
-      res.status(200);
-      res.json({
-        success: "false",
-        msg: "query 1 error",
-      });
-    } else {
-      if (result) {
-        let plain = await CONSTANTS.decrypt(result.password);
-        res.status(200);
-        res.json({
-          success: "true",
-          msg: plain,
-        });
-      } else {
+  db.collection("bafra_users").findOne(
+    { phone: phone },
+    async (err, result) => {
+      if (err) {
         res.status(200);
         res.json({
           success: "false",
-          msg: "no password for this bafra",
+          msg: "query 1 error",
         });
+      } else {
+        if (result) {
+          let plain = await CONSTANTS.decrypt(result.password);
+          res.status(200);
+          res.json({
+            success: "true",
+            msg: plain,
+          });
+        } else {
+          res.status(200);
+          res.json({
+            success: "false",
+            msg: "no password for this bafra",
+          });
+        }
       }
     }
-  });
+  );
 });
 
 router.get("/adminPassword", (req, res, next) => {
   let phone = req.query.phone;
 
-  db.collection("bafra_admins").findOne({ phone: phone }, async (err, result) => {
-    if (err) {
-      res.status(200);
-      res.json({
-        success: "false",
-        msg: "query 1 error",
-      });
-    } else {
-      if (result) {
-        let plain = await CONSTANTS.decrypt(result.password);
-        res.status(200);
-        res.json({
-          success: "true",
-          msg: plain,
-        });
-      } else {
+  db.collection("bafra_admins").findOne(
+    { phone: phone },
+    async (err, result) => {
+      if (err) {
         res.status(200);
         res.json({
           success: "false",
-          msg: "no password for this admin",
+          msg: "query 1 error",
         });
+      } else {
+        if (result) {
+          let plain = await CONSTANTS.decrypt(result.password);
+          res.status(200);
+          res.json({
+            success: "true",
+            msg: plain,
+          });
+        } else {
+          res.status(200);
+          res.json({
+            success: "false",
+            msg: "no password for this admin",
+          });
+        }
       }
     }
-  });
+  );
 });
 
+router.get("/user", (req, res, next) => {
+  let phone = req.query.phone;
 
+  db.collection("bafra_users").findOne(
+    { phone: phone },
+    async (err, result) => {
+      if (err) {
+        res.status(200);
+        res.json({
+          success: "false",
+          msg: "query 1 error",
+        });
+      } else {
+        if (result) {
+          res.status(200);
+          res.json({
+            success: "true",
+            msg: "done",
+            user: result,
+          });
+        } else {
+          res.status(200);
+          res.json({
+            success: "false",
+            msg: "no user",
+          });
+        }
+      }
+    }
+  );
+});
+
+router.get("/admin", (req, res, next) => {
+  let phone = req.query.phone;
+
+  db.collection("bafra_admins").findOne(
+    { phone: phone },
+    async (err, result) => {
+      if (err) {
+        res.status(200);
+        res.json({
+          success: "false",
+          msg: "query 1 error",
+        });
+      } else {
+        if (result) {
+          res.status(200);
+          res.json({
+            success: "true",
+            msg: "done",
+            admin: result,
+          });
+        } else {
+          res.status(200);
+          res.json({
+            success: "false",
+            msg: "no admin",
+          });
+        }
+      }
+    }
+  );
+});
